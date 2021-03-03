@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+  redis:
+    image: redis:6.2.0-alpine
+    volumes:
+      - ./redis-config:/usr/local/etc/redis
+    ports:
+      - "12345:6379"
+    command: redis-server /usr/local/etc/redis/redis.conf 
+  akka-server:
+    image: "bdesigns/server-akka:1.0.0"
+    ports:
+      - "8082:8082"
+    volumes:
+      - ./akka-config:/etc/akka-server
+  reverse:
+    container_name: reverse
+    hostname: reverse
+    image: nginx
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./nginx-config:/etc/nginx
+      - ./nginx-certs:/etc/ssl/private
+networks: 
+  default: 
+    external: 
+      name: external-example
